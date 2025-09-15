@@ -179,6 +179,12 @@
 <script setup>
 import { ref, watch, onMounted } from 'vue'
 
+// Helper function to get the correct asset URL for GitHub Pages
+const getAssetUrl = (path) => {
+    const base = import.meta.env.BASE_URL
+    return `${base}${path.startsWith('/') ? path.slice(1) : path}`
+}
+
 const availableModels = [
     'DarkStream-v2-logits',
     'DarkStream-bottleneck-tvtimbre',
@@ -206,19 +212,19 @@ const evaluations = ref({}) // Store user evaluations
 
 // Demo audio files - organized structure
 const demoSources = ref([
-    { name: 'RRBI', url: '/audio/demo/sources/RRBI_arctic_a0055.wav' },
-    { name: 'TNI', url: '/audio/demo/sources/TNI_arctic_a0356.wav' },
-    { name: 'BDL', url: '/audio/demo/sources/BDL_arctic_a0406.wav' },
-    { name: 'MBMPS', url: '/audio/demo/sources/MBMPS_arctic_b0244.wav' },
-    { name: 'CLB', url: '/audio/demo/sources/CLB_arctic_b0322.wav' }
+    { name: 'RRBI', url: getAssetUrl('/audio/demo/sources/RRBI_arctic_a0055.wav') },
+    { name: 'TNI', url: getAssetUrl('/audio/demo/sources/TNI_arctic_a0356.wav') },
+    { name: 'BDL', url: getAssetUrl('/audio/demo/sources/BDL_arctic_a0406.wav') },
+    { name: 'MBMPS', url: getAssetUrl('/audio/demo/sources/MBMPS_arctic_b0244.wav') },
+    { name: 'CLB', url: getAssetUrl('/audio/demo/sources/CLB_arctic_b0322.wav') }
 ])
 
 const demoTargets = ref([
-    { name: 'ERMS', url: '/audio/demo/targets/ERMS_arctic_a0113.wav' },
-    { name: 'ASI', url: '/audio/demo/targets/ASI_arctic_a0292.wav' },
-    { name: 'SLT', url: '/audio/demo/targets/SLT_arctic_a0334.wav' },
-    { name: 'SVBI', url: '/audio/demo/targets/SVBI_arctic_a0508.wav' },
-    { name: 'NJS', url: '/audio/demo/targets/NJS_arctic_b0170.wav' }
+    { name: 'ERMS', url: getAssetUrl('/audio/demo/targets/ERMS_arctic_a0113.wav') },
+    { name: 'ASI', url: getAssetUrl('/audio/demo/targets/ASI_arctic_a0292.wav') },
+    { name: 'SLT', url: getAssetUrl('/audio/demo/targets/SLT_arctic_a0334.wav') },
+    { name: 'SVBI', url: getAssetUrl('/audio/demo/targets/SVBI_arctic_a0508.wav') },
+    { name: 'NJS', url: getAssetUrl('/audio/demo/targets/NJS_arctic_b0170.wav') }
 ])
 
 // File upload handlers
@@ -244,7 +250,7 @@ const performVC = async (side) => {
         await new Promise(resolve => setTimeout(resolve, 2000)) // Simulate processing
 
         // Mock result - replace with actual result from API
-        const mockResult = '/demo/result_mock.wav'
+        const mockResult = getAssetUrl('/demo/result_mock.wav')
 
         if (side === 'left') {
             leftResult.value = mockResult
@@ -276,8 +282,8 @@ const generateDemoVC = async (targetIdx, sourceIdx) => {
 
         // Mock results - replace with actual results from API
         demoResults.value[targetIdx][sourceIdx] = {
-            left: `/audio/demo/results/${leftModel.value}/${targetName}/${sourceName}.wav`,
-            right: `/audio/demo/results/${rightModel.value}/${targetName}/${sourceName}.wav`
+            left: getAssetUrl(`/audio/demo/results/${leftModel.value}/${targetName}/${sourceName}.wav`),
+            right: getAssetUrl(`/audio/demo/results/${rightModel.value}/${targetName}/${sourceName}.wav`)
         }
 
         // Force reactivity update
@@ -308,8 +314,8 @@ const generateAllDemoVC = async () => {
                 const sourceName = demoSources.value[sIdx].url.split('/').pop().replace('.wav', '')
                 const targetName = demoTargets.value[tIdx].url.split('/').pop().replace('.wav', '')
                 newResults[tIdx][sIdx] = {
-                    left: `/audio/demo/results/${leftModel.value}/${targetName}/${sourceName}.wav`,
-                    right: `/audio/demo/results/${rightModel.value}/${targetName}/${sourceName}.wav`
+                    left: getAssetUrl(`/audio/demo/results/${leftModel.value}/${targetName}/${sourceName}.wav`),
+                    right: getAssetUrl(`/audio/demo/results/${rightModel.value}/${targetName}/${sourceName}.wav`)
                 }
             }
         }
