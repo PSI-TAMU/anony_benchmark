@@ -181,8 +181,11 @@ import { ref, watch, onMounted } from 'vue'
 
 // Helper function to get the correct asset URL for GitHub Pages
 const getAssetUrl = (path) => {
-    const base = import.meta.env.BASE_URL
-    return `${base}${path.startsWith('/') ? path.slice(1) : path}`
+    const base = import.meta.env.BASE_URL || '/'
+    // Remove leading slash from path and ensure base ends with slash
+    const cleanPath = path.startsWith('/') ? path.slice(1) : path
+    const cleanBase = base.endsWith('/') ? base : base + '/'
+    return cleanBase + cleanPath
 }
 
 const availableModels = [
