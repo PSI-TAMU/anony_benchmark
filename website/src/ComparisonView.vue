@@ -201,7 +201,9 @@ const availableModels = [
     'DarkStream-bottleneck-tvtimbre',
     'DarkStream-bottleneckvq-tvtimbre',
     'GenVC-small',
-    'GenVC-large'
+    'GenVC-large',
+    'GenVC-small-nonstreaming',
+    'GenVC-large-nonstreaming'
 ]
 const modelInfos = {
     'DarkStream-v2-logits': {
@@ -223,7 +225,15 @@ const modelInfos = {
     'GenVC-large': {
         latency: '0.32 ± 0.11',
         rtf: '0.83 ± 0.07',
-    }
+    },
+    'GenVC-small-nonstreaming': {
+        latency: 'None',
+        rtf: 'None',
+    },
+    'GenVC-large-nonstreaming': {
+        latency: 'None',
+        rtf: 'None',
+    },
 }
 
 const leftModel = ref('DarkStream-v2-logits')
