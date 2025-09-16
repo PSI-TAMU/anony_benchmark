@@ -2,8 +2,8 @@
     <div class="min-vh-100 bg-light p-4">
         <!-- Header -->
         <header class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="h3 fw-semibold">Side by Side</h1>
-            <button class="btn btn-link text-primary text-decoration-none">⚙️ Settings</button>
+            <h1 class="h3 fw-semibold">Voice Conversion Arena</h1>
+            <!-- <button class="btn btn-link text-primary text-decoration-none">⚙️ Settings</button> -->
         </header>
 
         <!-- Mode Selection -->
