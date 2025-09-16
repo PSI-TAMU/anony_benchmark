@@ -31,12 +31,20 @@
                 <select id="leftModel" class="form-select" v-model="leftModel">
                     <option v-for="model in availableModels" :key="model" :value="model">{{ model }}</option>
                 </select>
+                <div class="mt-2 p-2 bg-light rounded">
+                    <small class="text-muted d-block">Latency: <span class="fw-semibold">{{ modelInfos[leftModel].latency }}</span></small>
+                    <small class="text-muted d-block">RTF: <span class="fw-semibold">{{ modelInfos[leftModel].rtf }}</span></small>
+                </div>
             </div>
             <div class="col-md-6">
                 <label for="rightModel" class="form-label fw-semibold">Right Model</label>
                 <select id="rightModel" class="form-select" v-model="rightModel">
                     <option v-for="model in availableModels" :key="model" :value="model">{{ model }}</option>
                 </select>
+                <div class="mt-2 p-2 bg-light rounded">
+                    <small class="text-muted d-block">Latency: <span class="fw-semibold">{{ modelInfos[rightModel].latency }}</span></small>
+                    <small class="text-muted d-block">RTF: <span class="fw-semibold">{{ modelInfos[rightModel].rtf }}</span></small>
+                </div>
             </div>
         </div>
 
@@ -195,6 +203,28 @@ const availableModels = [
     'GenVC-small',
     'GenVC-large'
 ]
+const modelInfos = {
+    'DarkStream-v2-logits': {
+        latency: 'TODO',
+        rtf: 'TODO',
+    },
+    'DarkStream-bottleneck-tvtimbre': {
+        latency: 'TODO',
+        rtf: 'TODO',
+    },
+    'DarkStream-bottleneckvq-tvtimbre': {
+        latency: 'TODO',
+        rtf: 'TODO',
+    },
+    'GenVC-small': {
+        latency: '0.29 ± 0.03',
+        rtf: '0.83 ± 0.05',
+    },
+    'GenVC-large': {
+        latency: '0.32 ± 0.11',
+        rtf: '0.83 ± 0.07',
+    }
+}
 
 const leftModel = ref('DarkStream-v2-logits')
 const rightModel = ref('GenVC-small')
