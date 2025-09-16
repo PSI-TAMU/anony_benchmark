@@ -105,12 +105,12 @@
 
         <!-- Demo Mode Content -->
         <div v-else>
-            <div class="d-flex justify-content-between align-items-center mb-3">
+            <!-- <div class="d-flex justify-content-between align-items-center mb-3">
                 <h5 class="mb-0">Demo Mode: Source vs Target Speakers</h5>
                 <button class="btn btn-primary" @click="generateAllDemoVC" :disabled="isProcessing">
                     {{ isProcessing ? 'Generating All...' : 'Generate All Combinations' }}
                 </button>
-            </div>
+            </div> -->
             <p class="text-muted mb-4">Each cell shows results from both models side by side. Use "Generate All" to
                 create all 25 combinations at once.</p>
 
@@ -176,11 +176,11 @@
         </div>
 
         <!-- Footer Buttons -->
-        <div class="d-flex justify-content-center mt-4 gap-2">
+        <!-- <div class="d-flex justify-content-center mt-4 gap-2">
             <button class="btn btn-secondary">⬅ Left is Better</button>
             <button class="btn btn-secondary">It's a tie</button>
             <button class="btn btn-secondary">➡ Right is Better</button>
-        </div>
+        </div> -->
     </div>
 </template>
 
