@@ -1,186 +1,240 @@
 <template>
-    <div class="min-vh-100 bg-light p-4">
-        <!-- Header -->
-        <header class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="h3 fw-semibold">Voice Conversion Arena</h1>
-            <!-- <button class="btn btn-link text-primary text-decoration-none">⚙️ Settings</button> -->
-        </header>
+    <div class="min-vh-100 bg-white">
+        <!-- Paper Header -->
+        <div class="border-bottom">
+            <div class="container py-5">
+                <div class="text-center">
+                    <!-- Paper Title -->
+                    <h1 class="display-5 fw-light text-black mb-4 lh-base" style="font-weight: 300; letter-spacing: -1px;">
+                        Content-Synchronous Time-Varying Timbre<br>
+                        <span class="fw-bold">for Streaming Voice Anonymization</span>
+                    </h1>
 
-        <!-- Mode Selection -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="btn-group w-100" role="group">
-                    <!-- <input type="radio" class="btn-check" name="mode" id="uploadMode" v-model="currentMode"
-                        value="upload">
-                    <label class="btn btn-outline-primary" for="uploadMode">Upload Mode</label> -->
-
-                    <input type="radio" class="btn-check" name="mode" id="demoMode" v-model="currentMode" value="demo">
-                    <label class="btn btn-outline-primary" for="demoMode">Demo Mode</label>
-                </div>
-                <p class="text-muted mt-2 mb-0">
-                    <span v-if="currentMode === 'upload'">Upload your own source and target audio files</span>
-                    <span v-else>Test with 5 source × 5 target = 25 predefined audio combinations</span>
-                </p>
-            </div>
-        </div>
-
-        <!-- Model Selection -->
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <label for="leftModel" class="form-label fw-semibold">Left Model</label>
-                <select id="leftModel" class="form-select" v-model="leftModel">
-                    <option v-for="model in availableModels" :key="model" :value="model">{{ model }}</option>
-                </select>
-                <div class="mt-2 p-2 bg-light rounded">
-                    <small class="text-muted d-block">Latency: <span class="fw-semibold">{{ modelInfos[leftModel].latency }}</span></small>
-                    <small class="text-muted d-block">RTF: <span class="fw-semibold">{{ modelInfos[leftModel].rtf }}</span></small>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <label for="rightModel" class="form-label fw-semibold">Right Model</label>
-                <select id="rightModel" class="form-select" v-model="rightModel">
-                    <option v-for="model in availableModels" :key="model" :value="model">{{ model }}</option>
-                </select>
-                <div class="mt-2 p-2 bg-light rounded">
-                    <small class="text-muted d-block">Latency: <span class="fw-semibold">{{ modelInfos[rightModel].latency }}</span></small>
-                    <small class="text-muted d-block">RTF: <span class="fw-semibold">{{ modelInfos[rightModel].rtf }}</span></small>
-                </div>
-            </div>
-        </div>
-
-        <!-- Upload Mode Content -->
-        <div v-if="currentMode === 'upload'">
-            <!-- Audio Upload Section -->
-            <div class="row mb-4">
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">Source Audio</h5>
-                            <input type="file" class="form-control mb-3" accept="audio/*" @change="handleSourceUpload">
-                            <audio v-if="sourceAudioUrl" :src="sourceAudioUrl" controls class="w-100"></audio>
-                        </div>
+                    <!-- Conference Info -->
+                    <div class="mb-5">
+                        <p class="text-black fs-6 mb-0">Anonymized submission for ICLR 2026</p>
                     </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">Target Audio</h5>
-                            <input type="file" class="form-control mb-3" accept="audio/*" @change="handleTargetUpload">
-                            <audio v-if="targetAudioUrl" :src="targetAudioUrl" controls class="w-100"></audio>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Voice Conversion Results -->
-            <div class="row g-4" v-if="sourceAudioUrl && targetAudioUrl">
-                <div class="col-md-6">
-                    <div class="card shadow-sm h-100">
-                        <div class="card-body">
-                            <h2 class="card-title fw-semibold mb-3">{{ leftModel }}</h2>
-                            <div class="mb-3">
-                                <button class="btn btn-primary" @click="performVC('left')" :disabled="isProcessing">
-                                    {{ isProcessing ? 'Processing...' : 'Generate Voice Conversion' }}
-                                </button>
+                    <!-- Abstract -->
+                    <div class="row justify-content-center">
+                        <div class="col-lg-9">
+                            <div class="text-start">
+                                <h2 class="h6 fw-bold text-uppercase text-black mb-3 tracking-wide" style="letter-spacing: 2px;">Abstract</h2>
+                                <p class="text-black lh-lg mb-0" style="font-size: 1.1rem; font-weight: 400;">
+                                    Real-time voice conversion and speech anonymization require causal, low-latency
+                                    synthesis without sacrificing intelligibility or naturalness. A core limitation of
+                                    current systems is a representational mismatch: content is time-varying, while speaker
+                                    identity is injected as a static global embedding, yielding over-smoothed timbre and
+                                    reduced expressivity. We introduce a streamable speech synthesizer that aligns the
+                                    temporal granularity of identity and content via a <strong>content-synchronous, time-varying
+                                    timbre representation</strong>. A Global Timbre Memory expands a global timbre seed into compact
+                                    facets; frame-level content attends to this memory, a gate regulates variation, and
+                                    spherical interpolation preserves identity geometry while enabling smooth local changes.
+                                    Complementing this, a factorized vector-quantized bottleneck regularizes content to
+                                    reduce residual speaker leakage. The resulting system is fully streamable, with <strong>&lt;80 ms
+                                    GPU latency</strong>. Experiments demonstrate improvements in naturalness, speaker
+                                    similarity, and anonymization strength compared to state-of-the-art streaming
+                                    baselines, establishing TVT as a scalable approach for privacy-preserving and
+                                    expressive speech synthesis under strict latency budgets.
+                                </p>
                             </div>
-                            <audio v-if="leftResult" :src="leftResult" controls class="w-100"></audio>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="card shadow-sm h-100">
-                        <div class="card-body">
-                            <h2 class="card-title fw-semibold mb-3">{{ rightModel }}</h2>
-                            <div class="mb-3">
-                                <button class="btn btn-primary" @click="performVC('right')" :disabled="isProcessing">
-                                    {{ isProcessing ? 'Processing...' : 'Generate Voice Conversion' }}
-                                </button>
-                            </div>
-                            <audio v-if="rightResult" :src="rightResult" controls class="w-100"></audio>
-                        </div>
+
+                    <!-- Links -->
+                    <div class="mt-5">
+                        <a href="#" class="btn btn-outline-dark me-3 px-4 py-2">Paper</a>
+                        <a href="#" class="btn btn-dark me-3 px-4 py-2">Code</a>
+                        <a href="#demo" class="btn btn-outline-dark px-4 py-2">Demo ↓</a>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Demo Mode Content -->
-        <div v-else>
-            <!-- <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 class="mb-0">Demo Mode: Source vs Target Speakers</h5>
-                <button class="btn btn-primary" @click="generateAllDemoVC" :disabled="isProcessing">
-                    {{ isProcessing ? 'Generating All...' : 'Generate All Combinations' }}
-                </button>
-            </div> -->
-            <p class="text-muted mb-4">Each cell shows results from both models side by side. Use "Generate All" to
-                create all 25 combinations at once.</p>
+        <!-- Demo Section -->
+        <div class="bg-white" id="demo">
+            <div class="container py-5">
+                <!-- Demo Header -->
+                <div class="text-center mb-5">
+                    <h2 class="h3 fw-light text-black mb-3" style="letter-spacing: -0.5px;">Interactive Demo</h2>
+                    <p class="text-black-50 mb-0">Compare voice conversion models across source and target speakers</p>
+                </div>
 
-            <div class="table-responsive">
-                <table class="table table-bordered align-middle">
-                    <thead class="table-primary">
-                        <tr>
-                            <th class="bg-primary text-white text-center" style="min-width: 180px;">
-                                <small>Source →</small><br>
-                                <small>Target ↓</small>
-                            </th>
-                            <th v-for="(source, sIdx) in demoSources" :key="sIdx" class="text-center"
-                                style="min-width: 300px;">
-                                <div class="fw-semibold">{{ source.name }}</div>
-                                <audio :src="source.url" controls class="mt-1"
-                                    style="width: 280px; height: 30px;"></audio>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(target, tIdx) in demoTargets" :key="tIdx">
-                            <!-- Target Audio Header -->
-                            <td class="bg-light text-center">
-                                <div class="fw-semibold text-primary mb-2">{{ target.name }}</div>
-                                <audio :src="target.url" controls style="width: 100%; height: 30px;"></audio>
-                            </td>
-
-                            <!-- Voice Conversion Results -->
-                            <td v-for="(source, sIdx) in demoSources" :key="sIdx" class="p-2">
-                                <div v-if="demoResults[tIdx] && demoResults[tIdx][sIdx]"
-                                    class="border rounded p-2 bg-light">
-                                    <!-- Side by Side Audio Results -->
-                                    <div class="row g-1">
-                                        <!-- Left Model Result -->
-                                        <div class="col-6">
-                                            <small class="fw-semibold text-success d-block text-center">{{ leftModel
-                                                }}</small>
-                                            <audio v-if="demoResults[tIdx][sIdx].left"
-                                                :src="demoResults[tIdx][sIdx].left" controls class="w-100"
-                                                style="height: 30px;"></audio>
+                <!-- Model Selection -->
+                <div class="row justify-content-center mb-5">
+                    <div class="col-lg-10">
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <div class="border p-4">
+                                    <h4 class="h6 fw-bold text-uppercase mb-3 text-black" style="letter-spacing: 1px;">Model A</h4>
+                                    <select id="leftModel" class="form-select form-select-lg border-dark mb-3" v-model="leftModel">
+                                        <option v-for="model in availableModels" :key="model" :value="model">{{ model }}</option>
+                                    </select>
+                                    <div class="d-flex justify-content-between text-black-50">
+                                        <div class="text-center">
+                                            <div class="fw-bold text-black">{{ modelInfos[leftModel].latency }}</div>
+                                            <small>Latency</small>
                                         </div>
-
-                                        <!-- Right Model Result -->
-                                        <div class="col-6">
-                                            <small class="fw-semibold text-info d-block text-center">{{ rightModel
-                                                }}</small>
-                                            <audio v-if="demoResults[tIdx][sIdx].right"
-                                                :src="demoResults[tIdx][sIdx].right" controls class="w-100"
-                                                style="height: 30px;"></audio>
+                                        <div class="text-center">
+                                            <div class="fw-bold text-black">{{ modelInfos[leftModel].rtf }}</div>
+                                            <small>RTF</small>
                                         </div>
                                     </div>
                                 </div>
-
-                                <!-- Placeholder when no results -->
-                                <div v-else class="text-center text-muted p-3">
-                                    <small>Click "Generate All" to create voice conversion samples</small>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <div class="border p-4">
+                                    <h4 class="h6 fw-bold text-uppercase mb-3 text-black" style="letter-spacing: 1px;">Model B</h4>
+                                    <select id="rightModel" class="form-select form-select-lg border-dark mb-3" v-model="rightModel">
+                                        <option v-for="model in availableModels" :key="model" :value="model">{{ model }}</option>
+                                    </select>
+                                    <div class="d-flex justify-content-between text-black-50">
+                                        <div class="text-center">
+                                            <div class="fw-bold text-black">{{ modelInfos[rightModel].latency }}</div>
+                                            <small>Latency</small>
+                                        </div>
+                                        <div class="text-center">
+                                            <div class="fw-bold text-black">{{ modelInfos[rightModel].rtf }}</div>
+                                            <small>RTF</small>
+                                        </div>
+                                    </div>
                                 </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            <!-- Upload Mode Content -->
+            <div v-if="currentMode === 'upload'">
+                <!-- Audio Upload Section -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Source Audio</h5>
+                                <input type="file" class="form-control mb-3" accept="audio/*"
+                                    @change="handleSourceUpload">
+                                <audio v-if="sourceAudioUrl" :src="sourceAudioUrl" controls class="w-100"></audio>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Target Audio</h5>
+                                <input type="file" class="form-control mb-3" accept="audio/*"
+                                    @change="handleTargetUpload">
+                                <audio v-if="targetAudioUrl" :src="targetAudioUrl" controls class="w-100"></audio>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Voice Conversion Results -->
+                <div class="row g-4" v-if="sourceAudioUrl && targetAudioUrl">
+                    <div class="col-md-6">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body">
+                                <h2 class="card-title fw-semibold mb-3">{{ leftModel }}</h2>
+                                <div class="mb-3">
+                                    <button class="btn btn-primary" @click="performVC('left')" :disabled="isProcessing">
+                                        {{ isProcessing ? 'Processing...' : 'Generate Voice Conversion' }}
+                                    </button>
+                                </div>
+                                <audio v-if="leftResult" :src="leftResult" controls class="w-100"></audio>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body">
+                                <h2 class="card-title fw-semibold mb-3">{{ rightModel }}</h2>
+                                <div class="mb-3">
+                                    <button class="btn btn-primary" @click="performVC('right')"
+                                        :disabled="isProcessing">
+                                        {{ isProcessing ? 'Processing...' : 'Generate Voice Conversion' }}
+                                    </button>
+                                </div>
+                                <audio v-if="rightResult" :src="rightResult" controls class="w-100"></audio>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+                <!-- Demo Results Table -->
+                <div v-else>
+                    <div class="table-responsive">
+                        <table class="table table-bordered align-middle border-dark">
+                            <thead class="border-dark">
+                                <tr>
+                                    <th class="bg-black text-white text-center fw-normal py-3" style="min-width: 200px;">
+                                        <div class="small">Source →</div>
+                                        <div class="small">Target ↓</div>
+                                    </th>
+                                    <th v-for="(source, sIdx) in demoSources" :key="sIdx"
+                                        class="bg-black text-white text-center border-dark py-3" style="min-width: 300px;">
+                                        <div class="fw-bold mb-2">{{ source.name }}</div>
+                                        <audio :src="source.url" controls class="w-100" style="height: 32px;"></audio>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(target, tIdx) in demoTargets" :key="tIdx" class="border-dark">
+                                    <!-- Target Audio Header -->
+                                    <td class="bg-black text-white text-center border-dark py-3">
+                                        <div class="fw-bold mb-2">{{ target.name }}</div>
+                                        <audio :src="target.url" controls class="w-100" style="height: 32px;"></audio>
+                                    </td>
+
+                                    <!-- Voice Conversion Results -->
+                                    <td v-for="(source, sIdx) in demoSources" :key="sIdx" class="p-3 border-dark">
+                                        <div v-if="demoResults[tIdx] && demoResults[tIdx][sIdx]" class="bg-white">
+                                            <!-- Model Labels -->
+                                            <div class="row g-0 mb-2">
+                                                <div class="col-6 text-center">
+                                                    <small class="text-black fw-bold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.5px;">
+                                                        Model A
+                                                    </small>
+                                                </div>
+                                                <div class="col-6 text-center">
+                                                    <small class="text-black fw-bold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.5px;">
+                                                        Model B
+                                                    </small>
+                                                </div>
+                                            </div>
+
+                                            <!-- Audio Results -->
+                                            <div class="row g-2">
+                                                <div class="col-6">
+                                                    <div class="border p-2">
+                                                        <audio v-if="demoResults[tIdx][sIdx].left"
+                                                            :src="demoResults[tIdx][sIdx].left" controls class="w-100"
+                                                            style="height: 32px;"></audio>
+                                                    </div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <div class="border p-2">
+                                                        <audio v-if="demoResults[tIdx][sIdx].right"
+                                                            :src="demoResults[tIdx][sIdx].right" controls class="w-100"
+                                                            style="height: 32px;"></audio>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Placeholder -->
+                                        <div v-else class="text-center py-4">
+                                            <div class="text-black-50 small">Loading audio...</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
-
-        <!-- Footer Buttons -->
-        <!-- <div class="d-flex justify-content-center mt-4 gap-2">
-            <button class="btn btn-secondary">⬅ Left is Better</button>
-            <button class="btn btn-secondary">It's a tie</button>
-            <button class="btn btn-secondary">➡ Right is Better</button>
-        </div> -->
     </div>
 </template>
 
