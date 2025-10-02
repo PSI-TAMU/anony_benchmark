@@ -5,7 +5,8 @@
             <div class="container py-5">
                 <div class="text-center">
                     <!-- Paper Title -->
-                    <h1 class="display-5 fw-light text-black mb-4 lh-base" style="font-weight: 300; letter-spacing: -1px;">
+                    <h1 class="display-5 fw-light text-black mb-4 lh-base"
+                        style="font-weight: 300; letter-spacing: -1px;">
                         Content-Synchronous Time-Varying Timbre<br>
                         <span class="fw-bold">for Streaming Voice Anonymization</span>
                     </h1>
@@ -19,20 +20,27 @@
                     <div class="row justify-content-center">
                         <div class="col-lg-9">
                             <div class="text-start">
-                                <h2 class="h6 fw-bold text-uppercase text-black mb-3 tracking-wide" style="letter-spacing: 2px;">Abstract</h2>
+                                <h2 class="h6 fw-bold text-uppercase text-black mb-3 tracking-wide"
+                                    style="letter-spacing: 2px;">Abstract</h2>
                                 <p class="text-black lh-lg mb-0" style="font-size: 1.1rem; font-weight: 400;">
                                     Real-time voice conversion and speech anonymization require causal, low-latency
                                     synthesis without sacrificing intelligibility or naturalness. A core limitation of
-                                    current systems is a representational mismatch: content is time-varying, while speaker
+                                    current systems is a representational mismatch: content is time-varying, while
+                                    speaker
                                     identity is injected as a static global embedding, yielding over-smoothed timbre and
                                     reduced expressivity. We introduce a streamable speech synthesizer that aligns the
-                                    temporal granularity of identity and content via a <strong>content-synchronous, time-varying
-                                    timbre representation</strong>. A Global Timbre Memory expands a global timbre seed into compact
+                                    temporal granularity of identity and content via a <strong>content-synchronous,
+                                        time-varying
+                                        timbre representation</strong>. A Global Timbre Memory expands a global timbre
+                                    seed into compact
                                     facets; frame-level content attends to this memory, a gate regulates variation, and
-                                    spherical interpolation preserves identity geometry while enabling smooth local changes.
+                                    spherical interpolation preserves identity geometry while enabling smooth local
+                                    changes.
                                     Complementing this, a factorized vector-quantized bottleneck regularizes content to
-                                    reduce residual speaker leakage. The resulting system is fully streamable, with <strong>&lt;80 ms
-                                    GPU latency</strong>. Experiments demonstrate improvements in naturalness, speaker
+                                    reduce residual speaker leakage. The resulting system is fully streamable, with
+                                    <strong>&lt;80 ms
+                                        GPU latency</strong>. Experiments demonstrate improvements in naturalness,
+                                    speaker
                                     similarity, and anonymization strength compared to state-of-the-art streaming
                                     baselines, establishing TVT as a scalable approach for privacy-preserving and
                                     expressive speech synthesis under strict latency budgets.
@@ -66,9 +74,12 @@
                         <div class="row">
                             <div class="col-md-6 mb-4">
                                 <div class="border p-4">
-                                    <h4 class="h6 fw-bold text-uppercase mb-3 text-black" style="letter-spacing: 1px;">Model A</h4>
-                                    <select id="leftModel" class="form-select form-select-lg border-dark mb-3" v-model="leftModel">
-                                        <option v-for="model in availableModels" :key="model" :value="model">{{ model }}</option>
+                                    <h4 class="h6 fw-bold text-uppercase mb-3 text-black" style="letter-spacing: 1px;">
+                                        Model A</h4>
+                                    <select id="leftModel" class="form-select form-select-lg border-dark mb-3"
+                                        v-model="leftModel">
+                                        <option v-for="model in availableModels" :key="model" :value="model">{{ model }}
+                                        </option>
                                     </select>
                                     <div class="d-flex justify-content-between text-black-50">
                                         <div class="text-center">
@@ -84,9 +95,12 @@
                             </div>
                             <div class="col-md-6 mb-4">
                                 <div class="border p-4">
-                                    <h4 class="h6 fw-bold text-uppercase mb-3 text-black" style="letter-spacing: 1px;">Model B</h4>
-                                    <select id="rightModel" class="form-select form-select-lg border-dark mb-3" v-model="rightModel">
-                                        <option v-for="model in availableModels" :key="model" :value="model">{{ model }}</option>
+                                    <h4 class="h6 fw-bold text-uppercase mb-3 text-black" style="letter-spacing: 1px;">
+                                        Model B</h4>
+                                    <select id="rightModel" class="form-select form-select-lg border-dark mb-3"
+                                        v-model="rightModel">
+                                        <option v-for="model in availableModels" :key="model" :value="model">{{ model }}
+                                        </option>
                                     </select>
                                     <div class="d-flex justify-content-between text-black-50">
                                         <div class="text-center">
@@ -104,63 +118,64 @@
                     </div>
                 </div>
 
-            <!-- Upload Mode Content -->
-            <div v-if="currentMode === 'upload'">
-                <!-- Audio Upload Section -->
-                <div class="row mb-4">
-                    <div class="col-md-6">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Source Audio</h5>
-                                <input type="file" class="form-control mb-3" accept="audio/*"
-                                    @change="handleSourceUpload">
-                                <audio v-if="sourceAudioUrl" :src="sourceAudioUrl" controls class="w-100"></audio>
+                <!-- Upload Mode Content -->
+                <div v-if="currentMode === 'upload'">
+                    <!-- Audio Upload Section -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Source Audio</h5>
+                                    <input type="file" class="form-control mb-3" accept="audio/*"
+                                        @change="handleSourceUpload">
+                                    <audio v-if="sourceAudioUrl" :src="sourceAudioUrl" controls class="w-100"></audio>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Target Audio</h5>
+                                    <input type="file" class="form-control mb-3" accept="audio/*"
+                                        @change="handleTargetUpload">
+                                    <audio v-if="targetAudioUrl" :src="targetAudioUrl" controls class="w-100"></audio>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Target Audio</h5>
-                                <input type="file" class="form-control mb-3" accept="audio/*"
-                                    @change="handleTargetUpload">
-                                <audio v-if="targetAudioUrl" :src="targetAudioUrl" controls class="w-100"></audio>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Voice Conversion Results -->
-                <div class="row g-4" v-if="sourceAudioUrl && targetAudioUrl">
-                    <div class="col-md-6">
-                        <div class="card shadow-sm h-100">
-                            <div class="card-body">
-                                <h2 class="card-title fw-semibold mb-3">{{ leftModel }}</h2>
-                                <div class="mb-3">
-                                    <button class="btn btn-primary" @click="performVC('left')" :disabled="isProcessing">
-                                        {{ isProcessing ? 'Processing...' : 'Generate Voice Conversion' }}
-                                    </button>
+                    <!-- Voice Conversion Results -->
+                    <div class="row g-4" v-if="sourceAudioUrl && targetAudioUrl">
+                        <div class="col-md-6">
+                            <div class="card shadow-sm h-100">
+                                <div class="card-body">
+                                    <h2 class="card-title fw-semibold mb-3">{{ leftModel }}</h2>
+                                    <div class="mb-3">
+                                        <button class="btn btn-primary" @click="performVC('left')"
+                                            :disabled="isProcessing">
+                                            {{ isProcessing ? 'Processing...' : 'Generate Voice Conversion' }}
+                                        </button>
+                                    </div>
+                                    <audio v-if="leftResult" :src="leftResult" controls class="w-100"></audio>
                                 </div>
-                                <audio v-if="leftResult" :src="leftResult" controls class="w-100"></audio>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="card shadow-sm h-100">
-                            <div class="card-body">
-                                <h2 class="card-title fw-semibold mb-3">{{ rightModel }}</h2>
-                                <div class="mb-3">
-                                    <button class="btn btn-primary" @click="performVC('right')"
-                                        :disabled="isProcessing">
-                                        {{ isProcessing ? 'Processing...' : 'Generate Voice Conversion' }}
-                                    </button>
+                        <div class="col-md-6">
+                            <div class="card shadow-sm h-100">
+                                <div class="card-body">
+                                    <h2 class="card-title fw-semibold mb-3">{{ rightModel }}</h2>
+                                    <div class="mb-3">
+                                        <button class="btn btn-primary" @click="performVC('right')"
+                                            :disabled="isProcessing">
+                                            {{ isProcessing ? 'Processing...' : 'Generate Voice Conversion' }}
+                                        </button>
+                                    </div>
+                                    <audio v-if="rightResult" :src="rightResult" controls class="w-100"></audio>
                                 </div>
-                                <audio v-if="rightResult" :src="rightResult" controls class="w-100"></audio>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
                 <!-- Demo Results Table -->
                 <div v-else>
@@ -168,12 +183,14 @@
                         <table class="table table-bordered align-middle border-dark">
                             <thead class="border-dark">
                                 <tr>
-                                    <th class="bg-black text-white text-center fw-normal py-3" style="min-width: 200px;">
+                                    <th class="bg-black text-white text-center fw-normal py-3"
+                                        style="min-width: 200px;">
                                         <div class="small">Source →</div>
                                         <div class="small">Target ↓</div>
                                     </th>
                                     <th v-for="(source, sIdx) in demoSources" :key="sIdx"
-                                        class="bg-black text-white text-center border-dark py-3" style="min-width: 300px;">
+                                        class="bg-black text-white text-center border-dark py-3"
+                                        style="min-width: 300px;">
                                         <div class="fw-bold mb-2">{{ source.name }}</div>
                                         <audio :src="source.url" controls class="w-100" style="height: 32px;"></audio>
                                     </th>
@@ -193,12 +210,14 @@
                                             <!-- Model Labels -->
                                             <div class="row g-0 mb-2">
                                                 <div class="col-6 text-center">
-                                                    <small class="text-black fw-bold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.5px;">
+                                                    <small class="text-black fw-bold text-uppercase"
+                                                        style="font-size: 0.7rem; letter-spacing: 0.5px;">
                                                         Model A
                                                     </small>
                                                 </div>
                                                 <div class="col-6 text-center">
-                                                    <small class="text-black fw-bold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.5px;">
+                                                    <small class="text-black fw-bold text-uppercase"
+                                                        style="font-size: 0.7rem; letter-spacing: 0.5px;">
                                                         Model B
                                                     </small>
                                                 </div>
@@ -254,6 +273,7 @@ const availableModels = [
     'DarkStream-v2-logits',
     'DarkStream-bottleneck-tvtimbre',
     'DarkStream-bottleneckvq-tvtimbre',
+    'DarkStreamTVT-m1',
     'GenVC-small',
     'GenVC-large',
     'GenVC-small-nonstreaming',
@@ -269,6 +289,10 @@ const modelInfos = {
         rtf: 'TODO',
     },
     'DarkStream-bottleneckvq-tvtimbre': {
+        latency: 'TODO',
+        rtf: 'TODO',
+    },
+    'DarkStreamTVT-m1': {
         latency: 'TODO',
         rtf: 'TODO',
     },
@@ -291,7 +315,7 @@ const modelInfos = {
 }
 
 const leftModel = ref('DarkStream-v2-logits')
-const rightModel = ref('GenVC-small')
+const rightModel = ref('DarkStreamTVT-m1')
 
 // Mode selection
 const currentMode = ref('demo')
