@@ -270,29 +270,29 @@ const getAssetUrl = (path) => {
 }
 
 const availableModels = [
-    'DarkStream-v2-logits',
-    'DarkStream-bottleneck-tvtimbre',
-    'DarkStream-bottleneckvq-tvtimbre',
-    'DarkStreamTVT-m1',
+    'DarkStream-logits',
+    'TVTSyn-novq',
+    'TVTSyn',
+    'TVTSyn-m1',
     'GenVC-small',
     'GenVC-large',
     'GenVC-small-nonstreaming',
     'GenVC-large-nonstreaming'
 ]
 const modelInfos = {
-    'DarkStream-v2-logits': {
+    'DarkStream-logits': {
         latency: 'TODO',
         rtf: 'TODO',
     },
-    'DarkStream-bottleneck-tvtimbre': {
+    'TVTSyn-novq': {
         latency: 'TODO',
         rtf: 'TODO',
     },
-    'DarkStream-bottleneckvq-tvtimbre': {
+    'TVTSyn': {
         latency: 'TODO',
         rtf: 'TODO',
     },
-    'DarkStreamTVT-m1': {
+    'TVTSyn-m1': {
         latency: 'TODO',
         rtf: 'TODO',
     },
@@ -314,8 +314,8 @@ const modelInfos = {
     },
 }
 
-const leftModel = ref('DarkStream-v2-logits')
-const rightModel = ref('DarkStreamTVT-m1')
+const leftModel = ref('TVTSyn')
+const rightModel = ref('TVTSyn-m1')
 
 // Mode selection
 const currentMode = ref('demo')
