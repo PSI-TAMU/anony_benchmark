@@ -278,7 +278,8 @@ const availableModels = [
     'GenVC-large',
     'GenVC-small-nonstreaming',
     'GenVC-large-nonstreaming',
-    'causal-flow-matching-nonstreaming'
+    'causal-flow-matching-nonstreaming',
+    'DarkStream-quant-tvtimbre-lg',
 ]
 const modelInfos = {
     'DarkStream-logits': {
@@ -314,6 +315,10 @@ const modelInfos = {
         rtf: 'None',
     },
     'causal-flow-matching-nonstreaming': {
+        latency: 'None',
+        rtf: 'None',
+    },
+    'DarkStream-quant-tvtimbre-lg': {
         latency: 'None',
         rtf: 'None',
     }
