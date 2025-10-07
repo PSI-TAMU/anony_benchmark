@@ -277,7 +277,8 @@ const availableModels = [
     'GenVC-small',
     'GenVC-large',
     'GenVC-small-nonstreaming',
-    'GenVC-large-nonstreaming'
+    'GenVC-large-nonstreaming',
+    'causal-flow-matching-nonstreaming'
 ]
 const modelInfos = {
     'DarkStream-logits': {
@@ -312,6 +313,10 @@ const modelInfos = {
         latency: 'None',
         rtf: 'None',
     },
+    'causal-flow-matching-nonstreaming': {
+        latency: 'None',
+        rtf: 'None',
+    }
 }
 
 const leftModel = ref('TVTSyn')
