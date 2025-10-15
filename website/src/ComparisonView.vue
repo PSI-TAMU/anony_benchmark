@@ -274,6 +274,7 @@ const availableModels = [
     'TVTSyn-novq',
     'TVTSyn',
     'TVTSyn-m1',
+    'TVTSyn-m1-gtvt',
     'GenVC-small',
     'GenVC-large',
     'GenVC-small-nonstreaming',
@@ -295,6 +296,10 @@ const modelInfos = {
         rtf: 'TODO',
     },
     'TVTSyn-m1': {
+        latency: 'TODO',
+        rtf: 'TODO',
+    },
+    'TVTSyn-m1-gtvt': {
         latency: 'TODO',
         rtf: 'TODO',
     },
