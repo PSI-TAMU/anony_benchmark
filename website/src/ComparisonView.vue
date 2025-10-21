@@ -274,7 +274,10 @@ const availableModels = [
     'TVTSyn-novq',
     'TVTSyn',
     'TVTSyn-m1',
-    'TVTSyn-m1-gtvt',
+    'TVTSyn-m1-gtvt-ep9',
+    'TVTSyn-m1-gtvt-ep13',
+    'TVTSyn-m1-gtvt-ep22',
+    'TVTSyn-m1-gtvt-sr-ep10',
     'GenVC-small',
     'GenVC-large',
     'GenVC-small-nonstreaming',
@@ -299,7 +302,19 @@ const modelInfos = {
         latency: 'TODO',
         rtf: 'TODO',
     },
-    'TVTSyn-m1-gtvt': {
+    'TVTSyn-m1-gtvt-ep9': {
+        latency: 'TODO',
+        rtf: 'TODO',
+    },
+    'TVTSyn-m1-gtvt-ep13': {
+        latency: 'TODO',
+        rtf: 'TODO',
+    },
+    'TVTSyn-m1-gtvt-ep22': {
+        latency: 'TODO',
+        rtf: 'TODO',
+    },
+    'TVTSyn-m1-gtvt-sr-ep10': {
         latency: 'TODO',
         rtf: 'TODO',
     },
