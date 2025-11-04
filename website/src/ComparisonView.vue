@@ -278,6 +278,7 @@ const availableModels = [
     'TVTSyn-m1-gtvt-ep13',
     'TVTSyn-m1-gtvt-ep22',
     'TVTSyn-m1-gtvt-sr-ep10',
+    'TVTSyn-m1-gtvt-sr-ep28',
     'GenVC-small',
     'GenVC-large',
     'GenVC-small-nonstreaming',
@@ -318,6 +319,10 @@ const modelInfos = {
         latency: 'TODO',
         rtf: 'TODO',
     },
+    'TVTSyn-m1-gtvt-sr-ep28': {
+        latency: 'TODO',
+        rtf: 'TODO',
+    },
     'GenVC-small': {
         latency: '0.29 ± 0.03',
         rtf: '0.83 ± 0.05',
@@ -345,7 +350,7 @@ const modelInfos = {
 }
 
 const leftModel = ref('TVTSyn')
-const rightModel = ref('TVTSyn-m1')
+const rightModel = ref('TVTSyn-m1-gtvt-sr-ep28')
 
 // Mode selection
 const currentMode = ref('demo')
