@@ -1,255 +1,252 @@
 <template>
     <div class="min-vh-100 bg-white">
-        <!-- Paper Header -->
-        <div class="border-bottom">
-            <div class="container py-5">
-                <div class="text-center">
-                    <!-- Paper Title -->
-                    <h1 class="display-5 fw-light text-black mb-4 lh-base"
-                        style="font-weight: 300; letter-spacing: -1px;">
-                        Content-Synchronous Time-Varying Timbre<br>
-                        <span class="fw-bold">for Streaming Voice Anonymization</span>
-                    </h1>
-
-                    <!-- Conference Info -->
-                    <div class="mb-5">
-                        <p class="text-black fs-6 mb-0">Anonymized submission for ICLR 2026</p>
-                    </div>
-
-                    <!-- Abstract -->
-                    <div class="row justify-content-center">
-                        <div class="col-lg-9">
-                            <div class="text-start">
-                                <h2 class="h6 fw-bold text-uppercase text-black mb-3 tracking-wide"
-                                    style="letter-spacing: 2px;">Abstract</h2>
-                                <p class="text-black lh-lg mb-0" style="font-size: 1.1rem; font-weight: 400;">
-                                    Real-time voice conversion and speech anonymization require causal, low-latency
-                                    synthesis without sacrificing intelligibility or naturalness. A core limitation of
-                                    current systems is a representational mismatch: content is time-varying, while
-                                    speaker
-                                    identity is injected as a static global embedding, yielding over-smoothed timbre and
-                                    reduced expressivity. We introduce a streamable speech synthesizer that aligns the
-                                    temporal granularity of identity and content via a <strong>content-synchronous,
-                                        time-varying
-                                        timbre representation</strong>. A Global Timbre Memory expands a global timbre
-                                    seed into compact
-                                    facets; frame-level content attends to this memory, a gate regulates variation, and
-                                    spherical interpolation preserves identity geometry while enabling smooth local
-                                    changes.
-                                    Complementing this, a factorized vector-quantized bottleneck regularizes content to
-                                    reduce residual speaker leakage. The resulting system is fully streamable, with
-                                    <strong>&lt;80 ms
-                                        GPU latency</strong>. Experiments demonstrate improvements in naturalness,
-                                    speaker
-                                    similarity, and anonymization strength compared to state-of-the-art streaming
-                                    baselines, establishing TVT as a scalable approach for privacy-preserving and
-                                    expressive speech synthesis under strict latency budgets.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Links -->
-                    <div class="mt-5">
-                        <a href="#" class="btn btn-outline-dark me-3 px-4 py-2">Paper</a>
-                        <a href="#" class="btn btn-dark me-3 px-4 py-2">Code</a>
-                        <a href="#demo" class="btn btn-outline-dark px-4 py-2">Demo ↓</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- Demo Section -->
         <div class="bg-white" id="demo">
             <div class="container py-5">
                 <!-- Demo Header -->
                 <div class="text-center mb-5">
-                    <h2 class="h3 fw-light text-black mb-3" style="letter-spacing: -0.5px;">Interactive Demo</h2>
-                    <p class="text-black-50 mb-0">Compare voice conversion models across source and target speakers</p>
+                    <h2 class="demo-title">Interactive Demo</h2>
+                    <p class="demo-subtitle">Compare voice conversion models across different tasks</p>
                 </div>
 
                 <!-- Model Selection -->
                 <div class="row justify-content-center mb-5">
                     <div class="col-lg-10">
-                        <div class="row">
-                            <div class="col-md-6 mb-4">
-                                <div class="border p-4">
-                                    <h4 class="h6 fw-bold text-uppercase mb-3 text-black" style="letter-spacing: 1px;">
-                                        Model A</h4>
-                                    <select id="leftModel" class="form-select form-select-lg border-dark mb-3"
-                                        v-model="leftModel">
-                                        <option v-for="model in availableModels" :key="model" :value="model">{{ model }}
-                                        </option>
-                                    </select>
-                                    <div class="d-flex justify-content-between text-black-50">
-                                        <div class="text-center">
-                                            <div class="fw-bold text-black">{{ modelInfos[leftModel].latency }}</div>
-                                            <small>Latency</small>
-                                        </div>
-                                        <div class="text-center">
-                                            <div class="fw-bold text-black">{{ modelInfos[leftModel].rtf }}</div>
-                                            <small>RTF</small>
-                                        </div>
-                                    </div>
+                        <div class="models-header">
+                            <h3 class="models-title">Models</h3>
+                            <button @click="addModel" class="btn-add-model"
+                                :disabled="selectedModels.length >= availableModels.length">
+                                <span>+ Add Model</span>
+                            </button>
+                        </div>
+
+                        <div class="models-grid">
+                            <div v-for="(model, index) in selectedModels" :key="index" class="model-card">
+                                <div class="model-card-header">
+                                    <div class="model-label">Model {{ String.fromCharCode(65 + index) }}</div>
+                                    <button v-if="selectedModels.length > 1" @click="removeModel(index)"
+                                        class="btn-remove-model">
+                                        ×
+                                    </button>
                                 </div>
+                                <select class="model-select" v-model="selectedModels[index]">
+                                    <option v-for="availModel in availableModels" :key="availModel" :value="availModel">
+                                        {{ availModel }}
+                                    </option>
+                                </select>
                             </div>
-                            <div class="col-md-6 mb-4">
-                                <div class="border p-4">
-                                    <h4 class="h6 fw-bold text-uppercase mb-3 text-black" style="letter-spacing: 1px;">
-                                        Model B</h4>
-                                    <select id="rightModel" class="form-select form-select-lg border-dark mb-3"
-                                        v-model="rightModel">
-                                        <option v-for="model in availableModels" :key="model" :value="model">{{ model }}
-                                        </option>
-                                    </select>
-                                    <div class="d-flex justify-content-between text-black-50">
-                                        <div class="text-center">
-                                            <div class="fw-bold text-black">{{ modelInfos[rightModel].latency }}</div>
-                                            <small>Latency</small>
-                                        </div>
-                                        <div class="text-center">
-                                            <div class="fw-bold text-black">{{ modelInfos[rightModel].rtf }}</div>
-                                            <small>RTF</small>
-                                        </div>
-                                    </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Task Selection Tabs -->
+                <div class="row justify-content-center mb-5">
+                    <div class="col-lg-10">
+                        <div class="task-tabs-container">
+                            <div class="task-tabs">
+                                <button v-for="(config, taskKey) in taskConfigs" :key="taskKey"
+                                    @click="selectedTask = taskKey"
+                                    :class="['task-tab', { 'active': selectedTask === taskKey }]">
+                                    {{ config.label }}
+                                </button>
+                            </div>
+                            <div class="task-description">
+                                <p class="mb-0">{{ taskConfigs[selectedTask].description }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Self-Reconstruction Layout -->
+                <div v-if="selectedTask === 'self-recon'">
+                    <!-- Utterance Selection -->
+                    <div class="utterance-selector">
+                        <label for="utteranceSelect" class="utterance-label">Select Utterance:</label>
+                        <select id="utteranceSelect" v-model="selectedUtterance" class="utterance-select">
+                            <option v-for="utterance in availableUtterances" :key="utterance" :value="utterance">
+                                {{ utterance.replace('.wav', '') }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="reconstruction-layout">
+                        <div v-for="(speaker, idx) in taskConfigs['self-recon'].speakers" :key="idx"
+                            class="speaker-section">
+                            <div class="speaker-title">{{ speaker.name }}</div>
+
+                            <div class="audio-row"
+                                :style="{ gridTemplateColumns: `repeat(${selectedModels.length + 1}, 1fr)` }">
+                                <div class="audio-column">
+                                    <div class="audio-label">Original</div>
+                                    <audio :src="speaker.url" controls></audio>
+                                </div>
+
+                                <div v-for="(model, modelIdx) in selectedModels" :key="modelIdx" class="audio-column">
+                                    <div class="audio-label">{{ model }}</div>
+                                    <audio v-if="demoResults[idx]?.models?.[modelIdx]"
+                                        :src="demoResults[idx].models[modelIdx]" controls></audio>
+                                    <div v-else class="loading">Loading...</div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Upload Mode Content -->
-                <div v-if="currentMode === 'upload'">
-                    <!-- Audio Upload Section -->
-                    <div class="row mb-4">
-                        <div class="col-md-6">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-title">Source Audio</h5>
-                                    <input type="file" class="form-control mb-3" accept="audio/*"
-                                        @change="handleSourceUpload">
-                                    <audio v-if="sourceAudioUrl" :src="sourceAudioUrl" controls class="w-100"></audio>
-                                </div>
+                <!-- Same-Utterance Layout -->
+                <div v-else-if="selectedTask === 'same-utterance'" class="same-utterance-layout">
+                    <!-- Speaker and Utterance Selectors -->
+                    <div class="selector-panel">
+                        <div class="selector-row">
+                            <div class="selector-group">
+                                <label class="selector-label">Speaker A (Source):</label>
+                                <select v-model="selectedSpeakerA" class="speaker-select">
+                                    <option v-for="speaker in sameUtteranceSpeakers" :key="speaker" :value="speaker">
+                                        {{ speaker }}
+                                    </option>
+                                </select>
                             </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-title">Target Audio</h5>
-                                    <input type="file" class="form-control mb-3" accept="audio/*"
-                                        @change="handleTargetUpload">
-                                    <audio v-if="targetAudioUrl" :src="targetAudioUrl" controls class="w-100"></audio>
-                                </div>
+
+                            <div class="selector-group">
+                                <label class="selector-label">Speaker B (Target):</label>
+                                <select v-model="selectedSpeakerB" class="speaker-select">
+                                    <option v-for="speaker in sameUtteranceSpeakers" :key="speaker" :value="speaker">
+                                        {{ speaker }}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="selector-group">
+                                <label class="selector-label">Utterance:</label>
+                                <select v-model="selectedSameUtterance" class="utterance-select">
+                                    <option v-for="utt in sameUtteranceUtterances" :key="utt" :value="utt">
+                                        {{ utt.replace('.wav', '') }}
+                                    </option>
+                                </select>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Voice Conversion Results -->
-                    <div class="row g-4" v-if="sourceAudioUrl && targetAudioUrl">
-                        <div class="col-md-6">
-                            <div class="card shadow-sm h-100">
-                                <div class="card-body">
-                                    <h2 class="card-title fw-semibold mb-3">{{ leftModel }}</h2>
-                                    <div class="mb-3">
-                                        <button class="btn btn-primary" @click="performVC('left')"
-                                            :disabled="isProcessing">
-                                            {{ isProcessing ? 'Processing...' : 'Generate Voice Conversion' }}
-                                        </button>
-                                    </div>
-                                    <audio v-if="leftResult" :src="leftResult" controls class="w-100"></audio>
-                                </div>
+                    <!-- Audio Display Section -->
+                    <div class="same-utterance-section">
+                        <div class="same-utterance-title">{{ selectedSpeakerA }} → {{ selectedSpeakerB }}</div>
+
+                        <!-- Source and Target Row -->
+                        <div class="audio-row" style="grid-template-columns: repeat(2, 1fr)">
+                            <!-- Source Audio -->
+                            <div class="audio-column">
+                                <div class="audio-label">{{ selectedSpeakerA }} (Source)</div>
+                                <audio :src="getAssetUrl(`/demo/original/${selectedSpeakerA}/${selectedSameUtterance}`)"
+                                    controls></audio>
+                            </div>
+
+                            <!-- Target Audio -->
+                            <div class="audio-column">
+                                <div class="audio-label">{{ selectedSpeakerB }} (Target)</div>
+                                <audio :src="getAssetUrl(`/demo/original/${selectedSpeakerB}/${selectedSameUtterance}`)"
+                                    controls></audio>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="card shadow-sm h-100">
-                                <div class="card-body">
-                                    <h2 class="card-title fw-semibold mb-3">{{ rightModel }}</h2>
-                                    <div class="mb-3">
-                                        <button class="btn btn-primary" @click="performVC('right')"
-                                            :disabled="isProcessing">
-                                            {{ isProcessing ? 'Processing...' : 'Generate Voice Conversion' }}
-                                        </button>
-                                    </div>
-                                    <audio v-if="rightResult" :src="rightResult" controls class="w-100"></audio>
+
+                        <!-- Separator -->
+                        <div class="results-separator"></div>
+
+                        <!-- Model Results Row -->
+                        <div class="results-row-container">
+                            <div class="results-label">Converted Results:</div>
+                            <div class="audio-row"
+                                :style="{ gridTemplateColumns: `repeat(${selectedModels.length}, 1fr)` }">
+                                <div v-for="(model, modelIdx) in selectedModels" :key="modelIdx" class="audio-column">
+                                    <div class="audio-label">{{ model }}</div>
+                                    <audio v-if="demoResults.sameUtterance?.models?.[modelIdx]"
+                                        :src="demoResults.sameUtterance.models[modelIdx]" controls></audio>
+                                    <div v-else class="loading">Loading...</div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Demo Results Table -->
-                <div v-else>
-                    <div class="table-responsive">
-                        <table class="table table-bordered align-middle border-dark">
-                            <thead class="border-dark">
-                                <tr>
-                                    <th class="bg-black text-white text-center fw-normal py-3"
-                                        style="min-width: 200px;">
-                                        <div class="small">Source →</div>
-                                        <div class="small">Target ↓</div>
-                                    </th>
-                                    <th v-for="(source, sIdx) in demoSources" :key="sIdx"
-                                        class="bg-black text-white text-center border-dark py-3"
-                                        style="min-width: 300px;">
-                                        <div class="fw-bold mb-2">{{ source.name }}</div>
-                                        <audio :src="source.url" controls class="w-100" style="height: 32px;"></audio>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="(target, tIdx) in demoTargets" :key="tIdx" class="border-dark">
-                                    <!-- Target Audio Header -->
-                                    <td class="bg-black text-white text-center border-dark py-3">
-                                        <div class="fw-bold mb-2">{{ target.name }}</div>
-                                        <audio :src="target.url" controls class="w-100" style="height: 32px;"></audio>
-                                    </td>
+                <!-- Full VC Layout -->
+                <div v-else-if="selectedTask === 'full-vc'" class="same-utterance-layout">
+                    <!-- Speaker and Utterance Selectors -->
+                    <div class="selector-panel">
+                        <div class="selector-row-fullvc">
+                            <div class="selector-group">
+                                <label class="selector-label">Source Speaker:</label>
+                                <select v-model="selectedFullVCSourceSpeaker" class="speaker-select">
+                                    <option v-for="speaker in fullVCSpeakers" :key="speaker" :value="speaker">
+                                        {{ speaker }}
+                                    </option>
+                                </select>
+                            </div>
 
-                                    <!-- Voice Conversion Results -->
-                                    <td v-for="(source, sIdx) in demoSources" :key="sIdx" class="p-3 border-dark">
-                                        <div v-if="demoResults[tIdx] && demoResults[tIdx][sIdx]" class="bg-white">
-                                            <!-- Model Labels -->
-                                            <div class="row g-0 mb-2">
-                                                <div class="col-6 text-center">
-                                                    <small class="text-black fw-bold text-uppercase"
-                                                        style="font-size: 0.7rem; letter-spacing: 0.5px;">
-                                                        Model A
-                                                    </small>
-                                                </div>
-                                                <div class="col-6 text-center">
-                                                    <small class="text-black fw-bold text-uppercase"
-                                                        style="font-size: 0.7rem; letter-spacing: 0.5px;">
-                                                        Model B
-                                                    </small>
-                                                </div>
-                                            </div>
+                            <div class="selector-group">
+                                <label class="selector-label">Source Utterance:</label>
+                                <select v-model="selectedFullVCSourceUtterance" class="utterance-select">
+                                    <option v-for="utt in fullVCUtterances" :key="utt" :value="utt">
+                                        {{ utt.replace('.wav', '') }}
+                                    </option>
+                                </select>
+                            </div>
 
-                                            <!-- Audio Results -->
-                                            <div class="row g-2">
-                                                <div class="col-6">
-                                                    <div class="border p-2">
-                                                        <audio v-if="demoResults[tIdx][sIdx].left"
-                                                            :src="demoResults[tIdx][sIdx].left" controls class="w-100"
-                                                            style="height: 32px;"></audio>
-                                                    </div>
-                                                </div>
-                                                <div class="col-6">
-                                                    <div class="border p-2">
-                                                        <audio v-if="demoResults[tIdx][sIdx].right"
-                                                            :src="demoResults[tIdx][sIdx].right" controls class="w-100"
-                                                            style="height: 32px;"></audio>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                            <div class="selector-group">
+                                <label class="selector-label">Target Speaker:</label>
+                                <select v-model="selectedFullVCTargetSpeaker" class="speaker-select">
+                                    <option v-for="speaker in fullVCSpeakers" :key="speaker" :value="speaker">
+                                        {{ speaker }}
+                                    </option>
+                                </select>
+                            </div>
 
-                                        <!-- Placeholder -->
-                                        <div v-else class="text-center py-4">
-                                            <div class="text-black-50 small">Loading audio...</div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                            <div class="selector-group">
+                                <label class="selector-label">Target Utterance:</label>
+                                <select v-model="selectedFullVCTargetUtterance" class="utterance-select">
+                                    <option v-for="utt in fullVCUtterances" :key="utt" :value="utt">
+                                        {{ utt.replace('.wav', '') }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Audio Display Section -->
+                    <div class="same-utterance-section">
+                        <div class="same-utterance-title">{{ selectedFullVCSourceSpeaker }} ({{ selectedFullVCSourceUtterance.replace('.wav', '') }}) → {{ selectedFullVCTargetSpeaker }} ({{ selectedFullVCTargetUtterance.replace('.wav', '') }})</div>
+
+                        <!-- Source and Target Row -->
+                        <div class="audio-row" style="grid-template-columns: repeat(2, 1fr)">
+                            <!-- Source Audio -->
+                            <div class="audio-column">
+                                <div class="audio-label">{{ selectedFullVCSourceSpeaker }} (Source)</div>
+                                <audio :src="getAssetUrl(`/demo/original/${selectedFullVCSourceSpeaker}/${selectedFullVCSourceUtterance}`)"
+                                    controls></audio>
+                            </div>
+
+                            <!-- Target Audio -->
+                            <div class="audio-column">
+                                <div class="audio-label">{{ selectedFullVCTargetSpeaker }} (Target)</div>
+                                <audio :src="getAssetUrl(`/demo/original/${selectedFullVCTargetSpeaker}/${selectedFullVCTargetUtterance}`)"
+                                    controls></audio>
+                            </div>
+                        </div>
+
+                        <!-- Separator -->
+                        <div class="results-separator"></div>
+
+                        <!-- Model Results Row -->
+                        <div class="results-row-container">
+                            <div class="results-label">Converted Results:</div>
+                            <div class="audio-row"
+                                :style="{ gridTemplateColumns: `repeat(${selectedModels.length}, 1fr)` }">
+                                <div v-for="(model, modelIdx) in selectedModels" :key="modelIdx" class="audio-column">
+                                    <div class="audio-label">{{ model }}</div>
+                                    <audio v-if="demoResults.fullVC?.models?.[modelIdx]"
+                                        :src="demoResults.fullVC.models[modelIdx]" controls></audio>
+                                    <div v-else class="loading">Loading...</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -270,250 +267,891 @@ const getAssetUrl = (path) => {
 }
 
 const availableModels = [
-    'DarkStream-logits',
-    'TVTSyn-novq',
     'TVTSyn',
-    'TVTSyn-m1',
-    'TVTSyn-m1-gtvt-ep9',
-    'TVTSyn-m1-gtvt-ep13',
-    'TVTSyn-m1-gtvt-ep22',
-    'TVTSyn-m1-gtvt-sr-ep10',
-    'TVTSyn-m1-gtvt-sr-ep28',
-    'GenVC-small',
-    'GenVC-large',
-    'GenVC-small-nonstreaming',
-    'GenVC-large-nonstreaming',
-    'causal-flow-matching-nonstreaming',
-    'DarkStream-quant-tvtimbre-lg',
+    'TVTSyn-m1-gtvt-diff-utt',
+    'TVTSyn-m1-gtvt-same-utt',
+    'TVTSyn-m1-gtvt-contrastive',
 ]
-const modelInfos = {
-    'DarkStream-logits': {
-        latency: 'TODO',
-        rtf: 'TODO',
-    },
-    'TVTSyn-novq': {
-        latency: 'TODO',
-        rtf: 'TODO',
-    },
-    'TVTSyn': {
-        latency: 'TODO',
-        rtf: 'TODO',
-    },
-    'TVTSyn-m1': {
-        latency: 'TODO',
-        rtf: 'TODO',
-    },
-    'TVTSyn-m1-gtvt-ep9': {
-        latency: 'TODO',
-        rtf: 'TODO',
-    },
-    'TVTSyn-m1-gtvt-ep13': {
-        latency: 'TODO',
-        rtf: 'TODO',
-    },
-    'TVTSyn-m1-gtvt-ep22': {
-        latency: 'TODO',
-        rtf: 'TODO',
-    },
-    'TVTSyn-m1-gtvt-sr-ep10': {
-        latency: 'TODO',
-        rtf: 'TODO',
-    },
-    'TVTSyn-m1-gtvt-sr-ep28': {
-        latency: 'TODO',
-        rtf: 'TODO',
-    },
-    'GenVC-small': {
-        latency: '0.29 ± 0.03',
-        rtf: '0.83 ± 0.05',
-    },
-    'GenVC-large': {
-        latency: '0.32 ± 0.11',
-        rtf: '0.83 ± 0.07',
-    },
-    'GenVC-small-nonstreaming': {
-        latency: 'None',
-        rtf: 'None',
-    },
-    'GenVC-large-nonstreaming': {
-        latency: 'None',
-        rtf: 'None',
-    },
-    'causal-flow-matching-nonstreaming': {
-        latency: 'None',
-        rtf: 'None',
-    },
-    'DarkStream-quant-tvtimbre-lg': {
-        latency: 'None',
-        rtf: 'None',
+
+// Selected models array (instead of just left/right)
+const selectedModels = ref(['TVTSyn', 'TVTSyn-m1-gtvt-contrastive'])
+
+// Add model
+const addModel = () => {
+    if (selectedModels.value.length < availableModels.length) {
+        // Find first model not already selected
+        const nextModel = availableModels.find(m => !selectedModels.value.includes(m))
+        if (nextModel) {
+            selectedModels.value.push(nextModel)
+        }
     }
 }
 
-const leftModel = ref('TVTSyn')
-const rightModel = ref('TVTSyn-m1-gtvt-sr-ep28')
+// Remove model
+const removeModel = (index) => {
+    if (selectedModels.value.length > 1) {
+        selectedModels.value.splice(index, 1)
+    }
+}
 
-// Mode selection
-const currentMode = ref('demo')
 
-// Upload mode data
-const sourceAudioUrl = ref(null)
-const targetAudioUrl = ref(null)
-const leftResult = ref(null)
-const rightResult = ref(null)
-const isProcessing = ref(false)
+// Task selection
+const selectedTask = ref('self-recon') // 'self-recon', 'same-utterance', 'full-vc'
+
+// Self-recon utterance selection
+const availableUtterances = [
+    'arctic_a0043.wav',
+    'arctic_a0117.wav',
+    'arctic_a0133.wav',
+    'arctic_a0292.wav',
+    'arctic_b0076.wav',
+    'arctic_b0178.wav',
+    'arctic_b0250.wav',
+    'arctic_b0331.wav',
+    'arctic_b0347.wav',
+    'arctic_b0455.wav'
+]
+const selectedUtterance = ref(availableUtterances[0])
+
+// Same-utterance selection
+const sameUtteranceSpeakers = ['BDL', 'CLB', 'RMS', 'SLT']
+const sameUtteranceUtterances = availableUtterances
+const selectedSpeakerA = ref('BDL')
+const selectedSpeakerB = ref('SLT')
+const selectedSameUtterance = ref(availableUtterances[0])
+
+// Full-VC selection (different utterances for source and target)
+const fullVCSpeakers = ['BDL', 'CLB', 'RMS', 'SLT']
+const fullVCUtterances = availableUtterances
+const selectedFullVCSourceSpeaker = ref('BDL')
+const selectedFullVCTargetSpeaker = ref('SLT')
+const selectedFullVCSourceUtterance = ref(availableUtterances[0])
+const selectedFullVCTargetUtterance = ref(availableUtterances[1])
 
 // Demo mode data
 const demoResults = ref({}) // Store results for each target-source combination
-const evaluations = ref({}) // Store user evaluations
 
-// Demo audio files - organized structure
-const demoSources = ref([
-    { name: 'RRBI', url: getAssetUrl('/audio/demo/sources/RRBI_arctic_a0055.wav') },
-    { name: 'TNI', url: getAssetUrl('/audio/demo/sources/TNI_arctic_a0356.wav') },
-    { name: 'BDL', url: getAssetUrl('/audio/demo/sources/BDL_arctic_a0406.wav') },
-    { name: 'MBMPS', url: getAssetUrl('/audio/demo/sources/MBMPS_arctic_b0244.wav') },
-    { name: 'CLB', url: getAssetUrl('/audio/demo/sources/CLB_arctic_b0322.wav') }
-])
-
-const demoTargets = ref([
-    { name: 'ERMS', url: getAssetUrl('/audio/demo/targets/ERMS_arctic_a0113.wav') },
-    { name: 'ASI', url: getAssetUrl('/audio/demo/targets/ASI_arctic_a0292.wav') },
-    { name: 'SLT', url: getAssetUrl('/audio/demo/targets/SLT_arctic_a0334.wav') },
-    { name: 'SVBI', url: getAssetUrl('/audio/demo/targets/SVBI_arctic_a0508.wav') },
-    { name: 'NJS', url: getAssetUrl('/audio/demo/targets/NJS_arctic_b0170.wav') }
-])
-
-// File upload handlers
-const handleSourceUpload = (event) => {
-    const file = event.target.files[0]
-    if (file) {
-        sourceAudioUrl.value = URL.createObjectURL(file)
-    }
+// Computed speakers for self-recon based on selected utterance
+const getSelfReconSpeakers = () => {
+    const speakers = ['BDL', 'CLB', 'RMS', 'SLT']
+    return speakers.map(name => ({
+        name,
+        file: selectedUtterance.value,
+        url: getAssetUrl(`/demo/original/${name}/${selectedUtterance.value}`)
+    }))
 }
 
-const handleTargetUpload = (event) => {
-    const file = event.target.files[0]
-    if (file) {
-        targetAudioUrl.value = URL.createObjectURL(file)
-    }
-}
-
-// Voice conversion functions
-const performVC = async (side) => {
-    isProcessing.value = true
-    try {
-        // TODO: Replace with actual API call to your VC backend
-        await new Promise(resolve => setTimeout(resolve, 2000)) // Simulate processing
-
-        // Mock result - replace with actual result from API
-        const mockResult = getAssetUrl('/demo/result_mock.wav')
-
-        if (side === 'left') {
-            leftResult.value = mockResult
-        } else {
-            rightResult.value = mockResult
+// Task configurations
+const taskConfigs = {
+    'self-recon': {
+        label: 'Self-Reconstruction',
+        description: 'Models reconstruct the same speaker\'s voice',
+        get speakers() {
+            return getSelfReconSpeakers()
         }
-    } catch (error) {
-        console.error('Voice conversion failed:', error)
-    } finally {
-        isProcessing.value = false
-    }
-}
-
-// Generate voice conversion for demo mode
-const generateDemoVC = async (targetIdx, sourceIdx) => {
-    isProcessing.value = true
-    try {
-        // TODO: Replace with actual API call to your VC backend
-        await new Promise(resolve => setTimeout(resolve, 2000)) // Simulate processing
-
-        // Initialize nested object if it doesn't exist
-        if (!demoResults.value[targetIdx]) {
-            demoResults.value[targetIdx] = {}
-        }
-
-        // Get basenames for more readable filenames
-        const sourceName = demoSources.value[sourceIdx].url.split('/').pop().replace('.wav', '')
-        const targetName = demoTargets.value[targetIdx].url.split('/').pop().replace('.wav', '')
-
-        // Mock results - replace with actual results from API
-        demoResults.value[targetIdx][sourceIdx] = {
-            left: getAssetUrl(`/audio/demo/results/${leftModel.value}/${targetName}/${sourceName}.wav`),
-            right: getAssetUrl(`/audio/demo/results/${rightModel.value}/${targetName}/${sourceName}.wav`)
-        }
-
-        // Force reactivity update
-        demoResults.value = { ...demoResults.value }
-
-    } catch (error) {
-        console.error('Voice conversion failed:', error)
-    } finally {
-        isProcessing.value = false
+    },
+    'same-utterance': {
+        label: 'VC (Same Utterance)',
+        description: 'Different speakers, same content'
+    },
+    'full-vc': {
+        label: 'Full VC',
+        description: 'Different speakers, different content',
+        sources: [
+            { name: 'RRBI', url: getAssetUrl('/audio/demo/sources/RRBI_arctic_a0055.wav') },
+            { name: 'TNI', url: getAssetUrl('/audio/demo/sources/TNI_arctic_a0356.wav') },
+            { name: 'BDL', url: getAssetUrl('/audio/demo/sources/BDL_arctic_a0406.wav') },
+            { name: 'MBMPS', url: getAssetUrl('/audio/demo/sources/MBMPS_arctic_b0244.wav') },
+            { name: 'CLB', url: getAssetUrl('/audio/demo/sources/CLB_arctic_b0322.wav') }
+        ],
+        targets: [
+            { name: 'ERMS', url: getAssetUrl('/audio/demo/targets/ERMS_arctic_a0113.wav') },
+            { name: 'ASI', url: getAssetUrl('/audio/demo/targets/ASI_arctic_a0292.wav') },
+            { name: 'SLT', url: getAssetUrl('/audio/demo/targets/SLT_arctic_a0334.wav') },
+            { name: 'SVBI', url: getAssetUrl('/audio/demo/targets/SVBI_arctic_a0508.wav') },
+            { name: 'NJS', url: getAssetUrl('/audio/demo/targets/NJS_arctic_b0170.wav') }
+        ]
     }
 }
 
 // Generate all demo combinations at once
 const generateAllDemoVC = async () => {
-    isProcessing.value = true
     try {
-        // TODO: Replace with actual batch API call to your VC backend
-        // For now, simulate processing all combinations
-        // await new Promise(resolve => setTimeout(resolve, 3000)) // Simulate longer processing for all
-
         const newResults = {}
 
-        // Generate results for all combinations
-        for (let tIdx = 0; tIdx < demoTargets.value.length; tIdx++) {
-            newResults[tIdx] = {}
-            for (let sIdx = 0; sIdx < demoSources.value.length; sIdx++) {
-                // Get basenames for more readable filenames
-                const sourceName = demoSources.value[sIdx].url.split('/').pop().replace('.wav', '')
-                const targetName = demoTargets.value[tIdx].url.split('/').pop().replace('.wav', '')
-                newResults[tIdx][sIdx] = {
-                    left: getAssetUrl(`/audio/demo/results/${leftModel.value}/${targetName}/${sourceName}.wav`),
-                    right: getAssetUrl(`/audio/demo/results/${rightModel.value}/${targetName}/${sourceName}.wav`)
+        if (selectedTask.value === 'self-recon') {
+            // Self-reconstruction: simpler structure
+            const speakers = taskConfigs['self-recon'].speakers
+            for (let idx = 0; idx < speakers.length; idx++) {
+                const speaker = speakers[idx]
+                const models = []
+
+                // Generate URL for each selected model
+                // Path: /demo/vc_same_utt/{model}/{speaker}/{speaker}/{utterance}.wav
+                for (let modelIdx = 0; modelIdx < selectedModels.value.length; modelIdx++) {
+                    const modelName = selectedModels.value[modelIdx]
+                    models.push(getAssetUrl(`/demo/vc_same_utt/${modelName}/${speaker.name}/${speaker.name}/${speaker.file}`))
                 }
+
+                newResults[idx] = { models }
             }
+        } else if (selectedTask.value === 'same-utterance') {
+            // Selector-based layout for same-utterance
+            const models = []
+
+            // Generate URL for each selected model
+            // Path: /demo/vc_same_utt/{model}/{source}/{target}/{utterance}.wav
+            for (let modelIdx = 0; modelIdx < selectedModels.value.length; modelIdx++) {
+                const modelName = selectedModels.value[modelIdx]
+
+                const resultPath = `/demo/vc_same_utt/${modelName}/${selectedSpeakerA.value}/${selectedSpeakerB.value}/${selectedSameUtterance.value}`
+                models.push(getAssetUrl(resultPath))
+            }
+
+            newResults.sameUtterance = { models }
+        } else if (selectedTask.value === 'full-vc') {
+            // Selector-based layout for full-vc with different utterances
+            const models = []
+
+            // Generate URL for each selected model
+            // Path: /demo/vc_same_utt/{model}/{source_speaker}/{target_speaker}/{source_utt}-{target_utt}.wav
+            for (let modelIdx = 0; modelIdx < selectedModels.value.length; modelIdx++) {
+                const modelName = selectedModels.value[modelIdx]
+                const sourceUtt = selectedFullVCSourceUtterance.value.replace('.wav', '')
+                const targetUtt = selectedFullVCTargetUtterance.value.replace('.wav', '')
+                const filename = `${sourceUtt}-${targetUtt}.wav`
+
+                const resultPath = `/demo/vc_same_utt/${modelName}/${selectedFullVCSourceSpeaker.value}/${selectedFullVCTargetSpeaker.value}/${filename}`
+                models.push(getAssetUrl(resultPath))
+            }
+
+            newResults.fullVC = { models }
         }
 
         demoResults.value = newResults
 
     } catch (error) {
         console.error('Batch voice conversion failed:', error)
-    } finally {
-        isProcessing.value = false
     }
-}
-
-// Mark which model performed better for a specific combination
-const markBetter = (targetIdx, sourceIdx, choice) => {
-    if (!evaluations.value[targetIdx]) {
-        evaluations.value[targetIdx] = {}
-    }
-
-    evaluations.value[targetIdx][sourceIdx] = choice
-    evaluations.value = { ...evaluations.value }
-
-    console.log(`Target ${targetIdx}, Source ${sourceIdx}: ${choice} is better`)
 }
 
 // Watch for model changes and regenerate demo results
-watch([leftModel, rightModel], () => {
-    // Only regenerate if we're in demo mode and have existing results
-    if (currentMode.value === 'demo' && Object.keys(demoResults.value).length > 0) {
+watch(selectedModels, () => {
+    // Only regenerate if we have existing results
+    if (Object.keys(demoResults.value).length > 0) {
+        generateAllDemoVC()
+    }
+}, { deep: true })
+
+// Watch for task changes and regenerate demo results
+watch(selectedTask, () => {
+    generateAllDemoVC()
+})
+
+// Watch for utterance changes in self-recon
+watch(selectedUtterance, () => {
+    if (selectedTask.value === 'self-recon') {
+        generateAllDemoVC()
+    }
+})
+
+// Watch for speaker and utterance changes in same-utterance
+watch([selectedSpeakerA, selectedSpeakerB, selectedSameUtterance], () => {
+    if (selectedTask.value === 'same-utterance') {
         generateAllDemoVC()
     }
 })
 
 // Generate demo results when component mounts
 onMounted(() => {
-    // Auto-generate demo results on page load since we start in demo mode
-    if (currentMode.value === 'demo') {
-        generateAllDemoVC()
-    }
+    // Auto-generate demo results on page load
+    generateAllDemoVC()
 })
 </script>
 
 <style scoped>
-/* Bootstrap handles styling */
+/* Demo Header */
+.demo-title {
+    font-size: 36px;
+    font-weight: 700;
+    color: #24292f;
+    letter-spacing: -1px;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, #24292f 0%, #0969da 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.demo-subtitle {
+    font-size: 16px;
+    font-weight: 400;
+    color: #57606a;
+    letter-spacing: -0.2px;
+    line-height: 1.4;
+    margin: 0;
+}
+
+/* Model Selection */
+.models-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.models-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #24292f;
+    margin: 0;
+    letter-spacing: -0.3px;
+}
+
+.btn-add-model {
+    padding: 8px 16px;
+    background: #0969da;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    letter-spacing: -0.1px;
+}
+
+.btn-add-model:hover:not(:disabled) {
+    background: #0550ae;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(9, 105, 218, 0.3);
+}
+
+.btn-add-model:disabled {
+    background: #d0d7de;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.models-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+/* Model Selection Cards */
+.model-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.btn-remove-model {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    color: #57606a;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0;
+}
+
+.btn-remove-model:hover {
+    background: #ff4444;
+    border-color: #ff4444;
+    color: #ffffff;
+}
+
+/* Model Selection Cards */
+.model-card {
+    background: #ffffff;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    transition: all 0.3s ease;
+}
+
+.model-card:hover {
+    border-color: #c9d1d9;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+}
+
+.model-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #57606a;
+    margin-bottom: 10px;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+}
+
+.model-select {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 15px;
+    border: 1.5px solid #d0d7de;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #24292f;
+    font-weight: 500;
+    letter-spacing: -0.2px;
+    transition: all 0.2s ease;
+}
+
+.model-select:focus {
+    outline: none;
+    border-color: #0969da;
+    box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.1);
+}
+
+.model-select:hover {
+    border-color: #57606a;
+}
+
+/* Task Tabs */
+.task-tabs-container {
+    background: #ffffff;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.task-tabs {
+    display: flex;
+    border-bottom: 1px solid #e1e4e8;
+    background: #f6f8fa;
+}
+
+.task-tab {
+    flex: 1;
+    padding: 14px 20px;
+    background: transparent;
+    border: none;
+    font-size: 15px;
+    font-weight: 500;
+    color: #57606a;
+    cursor: pointer;
+    position: relative;
+    letter-spacing: -0.2px;
+    transition: all 0.2s ease;
+}
+
+.task-tab:hover {
+    color: #24292f;
+    background: rgba(0, 0, 0, 0.02);
+}
+
+.task-tab.active {
+    color: #24292f;
+    font-weight: 600;
+    background: #ffffff;
+}
+
+.task-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #0969da 0%, #0550ae 100%);
+    border-radius: 3px 3px 0 0;
+}
+
+.task-description {
+    padding: 16px 20px;
+    text-align: center;
+    color: #57606a;
+    font-size: 14px;
+    line-height: 1.5;
+    letter-spacing: -0.1px;
+}
+
+/* ==========================================
+   RECONSTRUCTION LAYOUT
+   ========================================== */
+.utterance-selector {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 32px;
+    padding: 20px;
+    background: #ffffff;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.utterance-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #24292f;
+    letter-spacing: -0.2px;
+    white-space: nowrap;
+}
+
+.utterance-select {
+    flex: 1;
+    max-width: 300px;
+    padding: 12px 14px;
+    font-size: 15px;
+    border: 1.5px solid #d0d7de;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #24292f;
+    font-weight: 500;
+    letter-spacing: -0.2px;
+    transition: all 0.2s ease;
+}
+
+.utterance-select:focus {
+    outline: none;
+    border-color: #0969da;
+    box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.1);
+}
+
+.utterance-select:hover {
+    border-color: #57606a;
+}
+
+.reconstruction-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.speaker-section {
+    background: #ffffff;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    transition: all 0.3s ease;
+}
+
+.speaker-section:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.speaker-title {
+    font-size: 19px;
+    font-weight: 600;
+    color: #24292f;
+    margin-bottom: 16px;
+    letter-spacing: -0.4px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #f6f8fa;
+}
+
+.audio-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.audio-column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: #f6f8fa;
+    padding: 14px;
+    border-radius: 10px;
+    border: 1px solid #e1e4e8;
+    transition: all 0.2s ease;
+}
+
+.audio-column:hover {
+    background: #ffffff;
+    border-color: #c9d1d9;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.audio-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #57606a;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+}
+
+.audio-column audio {
+    width: 100%;
+    height: 40px;
+    outline: none;
+}
+
+/* ==========================================
+   SAME-UTTERANCE SELECTOR LAYOUT
+   ========================================== */
+.same-utterance-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.selector-panel {
+    background: #ffffff;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.selector-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.selector-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.selector-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #24292f;
+    letter-spacing: -0.2px;
+}
+
+.speaker-select,
+.utterance-select {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 15px;
+    border: 1.5px solid #d0d7de;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #24292f;
+    font-weight: 500;
+    letter-spacing: -0.2px;
+    transition: all 0.2s ease;
+}
+
+.speaker-select:focus,
+.utterance-select:focus {
+    outline: none;
+    border-color: #0969da;
+    box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.1);
+}
+
+.speaker-select:hover,
+.utterance-select:hover {
+    border-color: #57606a;
+}
+
+.same-utterance-section {
+    background: #ffffff;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    transition: all 0.3s ease;
+}
+
+.same-utterance-section:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.same-utterance-title {
+    font-size: 19px;
+    font-weight: 600;
+    color: #24292f;
+    margin-bottom: 16px;
+    letter-spacing: -0.4px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #f6f8fa;
+}
+
+.results-separator {
+    height: 1px;
+    background: linear-gradient(to right, transparent, #d0d7de 20%, #d0d7de 80%, transparent);
+    margin: 24px 0;
+    position: relative;
+}
+
+.results-separator::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 8px;
+    height: 8px;
+    background: #0969da;
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px #ffffff, 0 0 0 4px #d0d7de;
+}
+
+.results-row-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.results-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #57606a;
+    letter-spacing: -0.2px;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+}
+
+/* ==========================================
+   VC LAYOUT
+   ========================================== */
+.vc-layout {
+    overflow-x: auto;
+    background: #ffffff;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.vc-table {
+    display: inline-block;
+    min-width: 100%;
+}
+
+.vc-header-row,
+.vc-data-row {
+    display: grid;
+    grid-template-columns: 150px repeat(5, minmax(220px, 1fr));
+    border-bottom: 1px solid #e1e4e8;
+}
+
+.vc-header-row {
+    background: #f6f8fa;
+}
+
+.vc-data-row:last-child {
+    border-bottom: none;
+}
+
+.vc-corner,
+.vc-source-cell,
+.vc-target-cell,
+.vc-result-cell {
+    padding: 16px;
+}
+
+.vc-source-cell,
+.vc-target-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: all 0.2s ease;
+}
+
+.vc-source-cell:hover,
+.vc-target-cell:hover {
+    background: rgba(9, 105, 218, 0.03);
+}
+
+.cell-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #24292f;
+    letter-spacing: -0.3px;
+}
+
+.vc-source-cell audio,
+.vc-target-cell audio {
+    width: 100%;
+    height: 36px;
+    outline: none;
+}
+
+.vc-result-cell {
+    background: #ffffff;
+    transition: all 0.2s ease;
+}
+
+.vc-result-cell:hover {
+    background: #fafbfc;
+}
+
+.result-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.result-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background: #f6f8fa;
+    border-radius: 8px;
+    border: 1px solid #e1e4e8;
+    transition: all 0.2s ease;
+}
+
+.result-item:hover {
+    background: #ffffff;
+    border-color: #c9d1d9;
+}
+
+.result-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #57606a;
+    min-width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    border-radius: 6px;
+    border: 1.5px solid #d0d7de;
+}
+
+.result-item audio {
+    width: 100%;
+    height: 32px;
+    outline: none;
+}
+
+/* ==========================================
+   LOADING STATE
+   ========================================== */
+.loading {
+    color: #57606a;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 16px 0;
+    text-align: center;
+    font-style: italic;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1024px) {
+
+    .vc-header-row,
+    .vc-data-row {
+        grid-template-columns: 140px repeat(5, minmax(200px, 1fr));
+    }
+
+    .audio-row {
+        gap: 14px;
+    }
+
+    .same-utterance-section {
+        padding: 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    .demo-title {
+        font-size: 28px;
+        letter-spacing: -0.7px;
+    }
+
+    .demo-subtitle {
+        font-size: 15px;
+    }
+
+    .task-tab {
+        font-size: 14px;
+        padding: 12px 16px;
+    }
+
+    .model-card {
+        padding: 16px;
+    }
+
+    .utterance-selector {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 16px;
+        margin-bottom: 24px;
+    }
+
+    .utterance-select {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .speaker-section {
+        padding: 16px;
+    }
+
+    .speaker-title {
+        font-size: 17px;
+        margin-bottom: 12px;
+        padding-bottom: 10px;
+    }
+
+    .audio-row {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .audio-column {
+        padding: 12px;
+    }
+
+    .vc-header-row,
+    .vc-data-row {
+        grid-template-columns: 120px repeat(5, minmax(180px, 1fr));
+    }
+
+    .vc-corner,
+    .vc-source-cell,
+    .vc-target-cell,
+    .vc-result-cell {
+        padding: 12px;
+    }
+
+    .cell-label {
+        font-size: 13px;
+    }
+
+    .result-item {
+        padding: 8px;
+        gap: 8px;
+    }
+
+    .selector-row {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .selector-panel {
+        padding: 16px;
+    }
+
+    .same-utterance-section {
+        padding: 16px;
+    }
+
+    .same-utterance-title {
+        font-size: 17px;
+    }
+
+    .results-separator {
+        margin: 20px 0;
+    }
+
+    .results-label {
+        font-size: 11px;
+    }
+}
 </style>
