@@ -169,32 +169,14 @@
 
                 <!-- Full VC Layout -->
                 <div v-else-if="selectedTask === 'full-vc'" class="same-utterance-layout">
-                    <!-- Speaker and Utterance Selectors -->
+                    <!-- Utterance Selectors -->
                     <div class="selector-panel">
-                        <div class="selector-row-fullvc">
-                            <div class="selector-group">
-                                <label class="selector-label">Source Speaker:</label>
-                                <select v-model="selectedFullVCSourceSpeaker" class="speaker-select">
-                                    <option v-for="speaker in fullVCSpeakers" :key="speaker" :value="speaker">
-                                        {{ speaker }}
-                                    </option>
-                                </select>
-                            </div>
-
+                        <div class="selector-row">
                             <div class="selector-group">
                                 <label class="selector-label">Source Utterance:</label>
                                 <select v-model="selectedFullVCSourceUtterance" class="utterance-select">
-                                    <option v-for="utt in fullVCUtterances" :key="utt" :value="utt">
+                                    <option v-for="utt in fullVCSourceUtterances" :key="utt" :value="utt">
                                         {{ utt.replace('.wav', '') }}
-                                    </option>
-                                </select>
-                            </div>
-
-                            <div class="selector-group">
-                                <label class="selector-label">Target Speaker:</label>
-                                <select v-model="selectedFullVCTargetSpeaker" class="speaker-select">
-                                    <option v-for="speaker in fullVCSpeakers" :key="speaker" :value="speaker">
-                                        {{ speaker }}
                                     </option>
                                 </select>
                             </div>
@@ -202,7 +184,7 @@
                             <div class="selector-group">
                                 <label class="selector-label">Target Utterance:</label>
                                 <select v-model="selectedFullVCTargetUtterance" class="utterance-select">
-                                    <option v-for="utt in fullVCUtterances" :key="utt" :value="utt">
+                                    <option v-for="utt in fullVCTargetUtterances" :key="utt" :value="utt">
                                         {{ utt.replace('.wav', '') }}
                                     </option>
                                 </select>
@@ -212,21 +194,21 @@
 
                     <!-- Audio Display Section -->
                     <div class="same-utterance-section">
-                        <div class="same-utterance-title">{{ selectedFullVCSourceSpeaker }} ({{ selectedFullVCSourceUtterance.replace('.wav', '') }}) → {{ selectedFullVCTargetSpeaker }} ({{ selectedFullVCTargetUtterance.replace('.wav', '') }})</div>
+                        <div class="same-utterance-title">{{ selectedFullVCSourceUtterance.replace('.wav', '') }} → {{ selectedFullVCTargetUtterance.replace('.wav', '') }}</div>
 
                         <!-- Source and Target Row -->
                         <div class="audio-row" style="grid-template-columns: repeat(2, 1fr)">
                             <!-- Source Audio -->
                             <div class="audio-column">
-                                <div class="audio-label">{{ selectedFullVCSourceSpeaker }} (Source)</div>
-                                <audio :src="getAssetUrl(`/demo/original/${selectedFullVCSourceSpeaker}/${selectedFullVCSourceUtterance}`)"
+                                <div class="audio-label">Source: {{ selectedFullVCSourceUtterance.replace('.wav', '') }}</div>
+                                <audio :src="getAssetUrl(`/demo/full_vc/sources/${selectedFullVCSourceUtterance}`)"
                                     controls></audio>
                             </div>
 
                             <!-- Target Audio -->
                             <div class="audio-column">
-                                <div class="audio-label">{{ selectedFullVCTargetSpeaker }} (Target)</div>
-                                <audio :src="getAssetUrl(`/demo/original/${selectedFullVCTargetSpeaker}/${selectedFullVCTargetUtterance}`)"
+                                <div class="audio-label">Target: {{ selectedFullVCTargetUtterance.replace('.wav', '') }}</div>
+                                <audio :src="getAssetUrl(`/demo/full_vc/targets/${selectedFullVCTargetUtterance}`)"
                                     controls></audio>
                             </div>
                         </div>
@@ -321,12 +303,10 @@ const selectedSpeakerB = ref('SLT')
 const selectedSameUtterance = ref(availableUtterances[0])
 
 // Full-VC selection (different utterances for source and target)
-const fullVCSpeakers = ['BDL', 'CLB', 'RMS', 'SLT']
-const fullVCUtterances = availableUtterances
-const selectedFullVCSourceSpeaker = ref('BDL')
-const selectedFullVCTargetSpeaker = ref('SLT')
-const selectedFullVCSourceUtterance = ref(availableUtterances[0])
-const selectedFullVCTargetUtterance = ref(availableUtterances[1])
+const fullVCSourceUtterances = ['BDL_arctic_a0406.wav', 'CLB_arctic_b0322.wav', 'MBMPS_arctic_b0244.wav', 'RRBI_arctic_a0055.wav', 'TNI_arctic_a0356.wav']
+const fullVCTargetUtterances = ['ASI_arctic_a0292.wav', 'ERMS_arctic_a0113.wav', 'NJS_arctic_b0170.wav', 'SLT_arctic_a0334.wav', 'SVBI_arctic_a0508.wav']
+const selectedFullVCSourceUtterance = ref(fullVCSourceUtterances[0])
+const selectedFullVCTargetUtterance = ref(fullVCTargetUtterances[0])
 
 // Demo mode data
 const demoResults = ref({}) // Store results for each target-source combination
@@ -414,14 +394,13 @@ const generateAllDemoVC = async () => {
             const models = []
 
             // Generate URL for each selected model
-            // Path: /demo/vc_same_utt/{model}/{source_speaker}/{target_speaker}/{source_utt}-{target_utt}.wav
+            // Path: /demo/full_vc/models/{model}/{target_utt}/{source_utt}.wav
             for (let modelIdx = 0; modelIdx < selectedModels.value.length; modelIdx++) {
                 const modelName = selectedModels.value[modelIdx]
-                const sourceUtt = selectedFullVCSourceUtterance.value.replace('.wav', '')
                 const targetUtt = selectedFullVCTargetUtterance.value.replace('.wav', '')
-                const filename = `${sourceUtt}-${targetUtt}.wav`
+                const sourceUtt = selectedFullVCSourceUtterance.value
 
-                const resultPath = `/demo/vc_same_utt/${modelName}/${selectedFullVCSourceSpeaker.value}/${selectedFullVCTargetSpeaker.value}/${filename}`
+                const resultPath = `/demo/full_vc/models/${modelName}/${targetUtt}/${sourceUtt}`
                 models.push(getAssetUrl(resultPath))
             }
 
@@ -458,6 +437,13 @@ watch(selectedUtterance, () => {
 // Watch for speaker and utterance changes in same-utterance
 watch([selectedSpeakerA, selectedSpeakerB, selectedSameUtterance], () => {
     if (selectedTask.value === 'same-utterance') {
+        generateAllDemoVC()
+    }
+})
+
+// Watch for utterance changes in full-vc
+watch([selectedFullVCSourceUtterance, selectedFullVCTargetUtterance], () => {
+    if (selectedTask.value === 'full-vc') {
         generateAllDemoVC()
     }
 })
