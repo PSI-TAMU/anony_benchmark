@@ -253,6 +253,7 @@ const availableModels = [
     'TVTSyn-m1-gtvt-diff-utt',
     'TVTSyn-m1-gtvt-same-utt',
     'TVTSyn-m1-gtvt-contrastive',
+    'TVTSyn-m1-gtvt-contrastive-epoch=20'
 ]
 
 // Selected models array (instead of just left/right)
