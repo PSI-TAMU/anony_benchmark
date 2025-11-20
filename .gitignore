@@ -1,4 +1,1 @@
-models
-evaluation
-notebooks
-!website/public/demo/full_vc/models/
+stt_en_conformer_ctc_xlarge_v1.10.0
