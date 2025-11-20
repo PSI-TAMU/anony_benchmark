@@ -17,25 +17,6 @@ Download the NVIDIA Conformer Large model for ASR evaluation:
 - Model: [stt_en_conformer_ctc_xlarge v1.10.0](https://catalog.ngc.nvidia.com/orgs/nvidia/teams/nemo/models/stt_en_conformer_ctc_xlarge?version=1.10.0)
 - Place the weights in: `/evaluation/asr/stt_en_conformer_ctc_xlarge_v1.10.0/`
 
-#### Configure NeMo (Optional)
-To disable progress bar logging during transcription, modify the NeMo library:
-**File to modify:** `nemo/collections/asr/models/ctc_models.py`
-
-**Location:** Find the `transcribe()` function in the `EncDecCTCModel` class
-
-**Change:**
-```python
-# Before
-for test_batch in tqdm(temporary_datalayer, desc="Transcribing"):
-```
-
-```python
-# After
-for test_batch in temporary_datalayer:
-```
-
-This removes the tqdm progress bar output during transcription, which is useful for cleaner logs in production environments.
-
 ### 2. Set Up Environment
 
 Create and activate the conda environment:
@@ -55,6 +36,25 @@ pip install --no-cache-dir "huggingface_hub==0.19.4" "transformers<4.37" "datase
 pip install "pytorch-lightning==1.9.5" "torchmetrics<=0.11.4"
 conda install -y -c conda-forge "scipy>=1.10,<1.12"
 ```
+
+#### 4. Configure NeMo (Optional)
+To disable progress bar logging during transcription, modify the NeMo library:
+**File to modify:** `nemo/collections/asr/models/ctc_models.py`
+
+**Location:** Find the `transcribe()` function in the `EncDecCTCModel` class
+
+**Change:**
+```python
+# Before
+for test_batch in tqdm(temporary_datalayer, desc="Transcribing"):
+```
+
+```python
+# After
+for test_batch in temporary_datalayer:
+```
+
+This removes the tqdm progress bar output during transcription, which is useful for cleaner logs in production environments.
 
 ## Usage
 
