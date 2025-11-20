@@ -104,6 +104,8 @@ print(f"MOS Score: {result['mos_pred']}")
 }
 ```
 
+For more usage examples, see the [demo notebook](evaluation/asr/demo.ipynb).
+
 ### Web Demo
 
 A web-based interface is available for comparing audio quality results from different models. See the `website/` directory for more details.
