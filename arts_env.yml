@@ -1,4 +1,4 @@
-name: arts-eval-test
+name: arts-eval
 channels:
   - pytorch
   - conda-forge

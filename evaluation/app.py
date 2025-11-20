@@ -6,7 +6,6 @@ import nemo.collections.asr as nemo_asr
 from pydantic import BaseModel
 from fastapi import FastAPI, HTTPException
 from NISQA.nisqa.NISQA_model import nisqaModel
-from nemo.collections.asr.metrics.wer import word_error_rate
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 asr = nemo_asr.models.EncDecCTCModelBPE.restore_from("asr/stt_en_conformer_ctc_xlarge_v1.10.0/stt_en_conformer_ctc_xlarge.tar.gz")
