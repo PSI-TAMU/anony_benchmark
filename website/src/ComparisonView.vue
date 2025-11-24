@@ -254,10 +254,11 @@ const availableModels = [
     'TVTSyn-m1-gtvt-same-utt',
     'TVTSyn-m1-gtvt-contrastive',
     'TVTSyn-m1-gtvt-ema',
+    'TVTSyn-m1-tvtimbre-ema'
 ]
 
 // Selected models array (instead of just left/right)
-const selectedModels = ref(['TVTSyn', 'TVTSyn-m1-gtvt-contrastive',  'TVTSyn-m1-gtvt-ema'])
+const selectedModels = ref(['TVTSyn', 'TVTSyn-m1-gtvt-ema',  'TVTSyn-m1-tvtimbre-ema'])
 
 // Add model
 const addModel = () => {
